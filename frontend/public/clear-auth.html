@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Authentication - CargoRapido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .info {
+            background: #e7f3ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+
+        .info strong {
+            color: #667eea;
+        }
+
+        ul {
+            text-align: left;
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+            color: #555;
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🔐</div>
+        <h1>Clear Authentication</h1>
+
+        <div class="info">
+            <strong>Why do I need this?</strong>
+            <p>If you're seeing "Failed to load users" or "Failed to load drivers" errors, your authentication token has expired or become invalid.</p>
+        </div>
+
+        <p><strong>This will clear:</strong></p>
+        <ul>
+            <li>JWT Authentication Tokens</li>
+            <li>User Session Data</li>
+            <li>Local Storage</li>
+            <li>Session Storage</li>
+            <li>All Cached Login Data</li>
+        </ul>
+
+        <button class="button" onclick="clearAuth()">🗑️ Clear All Auth Data</button>
+        <button class="button" onclick="clearAndLogin('admin')">🔑 Clear & Go to Admin Login</button>
+        <button class="button" onclick="clearAndLogin('driver')">🚚 Clear & Go to Driver Login</button>
+        <button class="button" onclick="clearAndLogin('user')">👤 Clear & Go to User Login</button>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        function clearAuth() {
+            try {
+                // Clear all storage
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Clear cookies (if any)
+                document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+
+                // Show success message
+                const statusEl = document.getElementById('status');
+                statusEl.className = 'status success';
+                statusEl.innerHTML = '✅ <strong>Success!</strong> All authentication data has been cleared.<br><br>You can now close this page and login again.';
+
+                console.log('✅ All authentication data cleared successfully');
+            } catch (error) {
+                const statusEl = document.getElementById('status');
+                statusEl.className = 'status error';
+                statusEl.innerHTML = '❌ <strong>Error:</strong> ' + error.message;
+                console.error('Error clearing auth:', error);
+            }
+        }
+
+        function clearAndLogin(type) {
+            clearAuth();
+
+            setTimeout(() => {
+                if (type === 'admin') {
+                    window.location.href = '/admin/login';
+                } else if (type === 'driver') {
+                    window.location.href = '/driver/login';
+                } else {
+                    window.location.href = '/login';
+                }
+            }, 1000);
+        }
+
+        // Auto-display current storage info on load
+        window.addEventListener('load', () => {
+            const tokenExists = !!localStorage.getItem('token');
+            const userExists = !!localStorage.getItem('user');
+
+            if (tokenExists || userExists) {
+                console.log('Current auth data found:');
+                console.log('- Token:', tokenExists ? 'EXISTS' : 'NONE');
+                console.log('- User:', userExists ? 'EXISTS' : 'NONE');
+            }
+        });
+    </script>
+</body>
+</html>

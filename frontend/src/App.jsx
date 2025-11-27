@@ -1,0 +1,48 @@
+import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import router from './router';
+import { useEffect } from 'react';
+import useAuthStore from './store/authStore';
+import { initializeSocket } from './utils/socket';
+
+function App() {
+  const { token, isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated && token) {
+      initializeSocket(token);
+    }
+  }, [isAuthenticated, token]);
+
+  return (
+    <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 4000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+      <RouterProvider router={router} />
+    </>
+  );
+}
+
+export default App;
