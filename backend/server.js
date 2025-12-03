@@ -40,7 +40,7 @@ app.use(securityLogger); // Security logging
 
 // CORS
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-XSRF-TOKEN']
@@ -63,7 +63,6 @@ import bookingRoutes from './routes/bookingRoutes.js';
 import driverRoutes from './routes/driverRoutes.js';
 import podRoutes from './routes/podRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
-import aiRoutes from './routes/aiRoutes.js';
 import driverAssignmentRoutes from './routes/driverAssignment.js';
 import adminRoutes from './routes/adminRoutes.js';
 
@@ -78,7 +77,6 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/pod', podRoutes);
 app.use('/api/pay', paymentRoutes);
-app.use('/api/ai', aiRoutes);
 app.use('/api/driver-assignment', driverAssignmentRoutes);
 app.use('/api/admin', adminRoutes);
 
@@ -103,7 +101,6 @@ app.get('/', (req, res) => {
       drivers: '/api/drivers',
       pod: '/api/pod',
       payments: '/api/pay',
-      ai: '/api/ai'
     }
   });
 });
