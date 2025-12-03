@@ -36,7 +36,7 @@ const seedUsers = async () => {
       {
         name: 'Admin User',
         email: 'admin@example.com',
-        password: 'Admin@1234',  // Let model pre-save hook hash it
+        password: process.env.ADMIN_PASSWORD || 'Admin@1234',
         phone: '9876543212',
         role: 'admin',
         address: {
